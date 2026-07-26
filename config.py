@@ -1,0 +1,3 @@
+SECRET_KEY="job_board-secret-key-keep-safe"
+ALGORITHM="HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES=60
