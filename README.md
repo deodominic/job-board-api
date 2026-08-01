@@ -127,6 +127,11 @@ uvicorn main:app --reload
 
 http://localhost:8000/docs
 
+## Live API
+
+- **API:** https://job-board-api-y0ko.onrender.com
+- **Swagger UI:** https://job-board-api-y0ko.onrender.com/docs
+
 ## How to Test the API
 
 1. Register as employer: `POST /auth/register` with `role: "employer"`
