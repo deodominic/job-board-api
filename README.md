@@ -129,8 +129,8 @@ http://localhost:8000/docs
 
 ## Live API
 
-- **API:** https://job-board-api-y0ko.onrender.com
-- **Swagger UI:** https://job-board-api-y0ko.onrender.com/docs
+- **API:** https://job-board-api-1-g8h0.onrender.com
+- **Swagger UI:**https://job-board-api-1-g8h0.onrender.com/docs
 
 ## How to Test the API
 
