@@ -1,10 +1,9 @@
-fastapi
-uvicorn
-sqlalchemy
-pg8000
-psycopg2-binary
+fastapi==0.141.1
+uvicorn==0.53.0
+SQLAlchemy==2.0.54
+pg8000==1.31.5
 passlib[bcrypt]==1.7.4
 bcrypt==4.0.1
-python-jose
-python-dotenv
-email-validator
+python-jose==3.5.0
+python-dotenv==1.2.3
+email-validator==2.3.0
