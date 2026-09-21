@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr, validator
 from typing import Optional
 
 class UserCreate(BaseModel):
-    email: str
+    email: EmailStr
     password: str
     role: str
 
