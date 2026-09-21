@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from database import engine, Base
+from database.db import engine, Base
 from routers import auth, jobs, applications
 
 app = FastAPI(
@@ -14,7 +14,7 @@ A REST API for connecting employers and job seekers.
 - Seekers can browse, search, and apply to jobs
 - Employers can view and manage applications
     """,
-    version="1.0.0"
+    version="2.0.0"
 )
 
 Base.metadata.create_all(bind=engine)

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from database import get_db
-from models import Job, User
+from database.db import get_db
+from database.models import Job, User
 from schemas import JobCreate, JobResponse
 from security import get_current_user, require_role
 from typing import List,Optional

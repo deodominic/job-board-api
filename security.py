@@ -5,8 +5,8 @@ from fastapi import HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
-from models import User
-from database import get_db
+from database.models import User
+from database.db import get_db
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
