@@ -66,3 +66,19 @@ class ApplicationResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ExternalJob(BaseModel):
+    id: str
+    title: str
+    company: Optional[str] = None
+    location: Optional[str] = None
+    description: Optional[str] = None
+    contract_time: Optional[str] = None
+    created: Optional[str] = None
+    redirect_url: Optional[str] = None
+    category: Optional[str] = None
+    salary_is_predicted: Optional[str] = None
+
+class ExternalJobResponse(BaseModel):
+    count: int
+    jobs: list[ExternalJob]

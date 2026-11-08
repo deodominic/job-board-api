@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from database.db import engine, Base
-from routers import auth, jobs, applications
+from routers import auth, jobs, applications, external_jobs
 
 app = FastAPI(
     title="Job Board API",
@@ -22,6 +22,8 @@ Base.metadata.create_all(bind=engine)
 app.include_router(auth.router)
 app.include_router(jobs.router)
 app.include_router(applications.router)
+app.include_router(external_jobs.router)
+
 
 @app.get("/", tags=["Root"])
 def root():
