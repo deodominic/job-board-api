@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from database.db import get_db
 from database.models import Application,Job,User
 from schemas import ApplicationResponse
@@ -50,9 +50,13 @@ def get_my_applications(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_role("seeker"))
 ):
-    return db.query(Application).filter(
-        Application.seeker_id == current_user.id
-    ).all()
+    return (
+        db.query(Application)
+        .options(joinedload(Application.job), joinedload(Application.seeker))
+        .filter(Application.seeker_id == current_user.id)
+        .order_by(Application.created_at.desc(), Application.id.desc())
+        .all()
+    )
 
 # EMPLOYER ONLY — view applications for their job
 @router.get("/jobs/{job_id}", response_model=List[ApplicationResponse])
@@ -66,9 +70,13 @@ def get_job_applications(
         raise HTTPException(status_code=404, detail="Job not found")
     if job.employer_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not your job")
-    return db.query(Application).filter(
-        Application.job_id == job_id
-    ).all()
+    return (
+        db.query(Application)
+        .options(joinedload(Application.job), joinedload(Application.seeker))
+        .filter(Application.job_id == job_id)
+        .order_by(Application.created_at.desc(), Application.id.desc())
+        .all()
+    )
 
 # EMPLOYER ONLY — update application status
 @router.patch("/{application_id}/status", response_model=ApplicationResponse)

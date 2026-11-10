@@ -43,3 +43,16 @@ class Application(Base):
 
     job = relationship("Job", back_populates="applications")
     seeker = relationship("User", back_populates="applications")
+
+    # Read-only conveniences exposed by ApplicationResponse. Not database columns.
+    @property
+    def job_title(self):
+        return self.job.title if self.job else None
+
+    @property
+    def job_company(self):
+        return self.job.company if self.job else None
+
+    @property
+    def seeker_email(self):
+        return self.seeker.email if self.seeker else None

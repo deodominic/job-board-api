@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, validator
-from typing import Optional
+from datetime import datetime
+from typing import List, Optional
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -54,6 +55,7 @@ class JobResponse(BaseModel):
     location: str
     is_open: bool
     employer_id: int
+    created_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -63,22 +65,33 @@ class ApplicationResponse(BaseModel):
     job_id: int
     seeker_id: int
     status: str
+    created_at: Optional[datetime] = None
+    job_title: Optional[str] = None
+    job_company: Optional[str] = None
+    seeker_email: Optional[str] = None
 
     class Config:
         from_attributes = True
 
 class ExternalJob(BaseModel):
     id: str
+    source: str = "adzuna"
     title: str
     company: Optional[str] = None
     location: Optional[str] = None
-    description: Optional[str] = None
-    contract_time: Optional[str] = None
-    created: Optional[str] = None
-    redirect_url: Optional[str] = None
+    description: Optional[str] = None      # short snippet from Adzuna: render as plain text
+    contract_time: Optional[str] = None    # "full_time" / "part_time" / None
+    contract_type: Optional[str] = None    # "permanent" / "contract" / None
     category: Optional[str] = None
-    salary_is_predicted: Optional[str] = None
+    created: Optional[str] = None          # ISO timestamp
+    salary_min: Optional[float] = None
+    salary_max: Optional[float] = None
+    salary_is_predicted: bool = False
+    redirect_url: str
 
 class ExternalJobResponse(BaseModel):
     count: int
-    jobs: list[ExternalJob]
+    page: int
+    has_more: bool
+    jobs: List[ExternalJob]
+    attribution: str = "Jobs by Adzuna"

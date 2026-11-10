@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from database.db import get_db
-from database.models import Job, User
+from database.models import Application, Job, User
 from schemas import JobCreate, JobResponse
 from security import get_current_user, require_role
 from typing import List,Optional
@@ -19,15 +20,36 @@ def get_jobs(
     query = db.query(Job).filter(Job.is_open == True)
 
     if search:
-        query = query.filter(Job.title.ilike(f"%{search}%"))
+        query = query.filter(or_(
+            Job.title.icontains(search, autoescape=True),
+            Job.company.icontains(search, autoescape=True),
+            Job.description.icontains(search, autoescape=True),
+        ))
 
     if location:
-        query = query.filter(Job.location.ilike(f"%{location}%"))
+        query = query.filter(Job.location.icontains(location, autoescape=True))
 
     if company:
-        query = query.filter(Job.company.ilike(f"%{company}%"))
+        query = query.filter(Job.company.icontains(company, autoescape=True))
 
-    return query.all()
+    return query.order_by(Job.created_at.desc(), Job.id.desc()).all()
+
+
+# EMPLOYER ONLY — all of my jobs, including closed ones.
+# Declared before "/{job_id}" so "mine" is not parsed as a job id.
+@router.get("/mine", response_model=List[JobResponse])
+def get_my_jobs(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role("employer"))
+):
+    return (
+        db.query(Job)
+        .filter(Job.employer_id == current_user.id)
+        .order_by(Job.created_at.desc(), Job.id.desc())
+        .all()
+    )
+
+
 # PUBLIC — get single job
 @router.get("/{job_id}", response_model=JobResponse)
 def get_job(job_id: int, db: Session = Depends(get_db)):
@@ -105,6 +127,11 @@ def delete_job(
         raise HTTPException(status_code=404, detail="Job not found")
     if db_job.employer_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not your job")
+    if db.query(Application.id).filter(Application.job_id == job_id).first():
+        raise HTTPException(
+            status_code=409,
+            detail="This job has applications, so it can't be deleted. Close it instead."
+        )
     db.delete(db_job)
     db.commit()
     return {"message": "Job deleted"}
